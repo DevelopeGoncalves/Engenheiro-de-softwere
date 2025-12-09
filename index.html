@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Victorino.eng - Sistema Profissional de Gestão</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0e27;
+            --bg-secondary: #121633;
+            --bg-card: rgba(18, 22, 51, 0.6);
+            --bg-modal: rgba(10, 14, 39, 0.95);
+            --border-color: rgba(99, 102, 241, 0.2);
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --accent-primary: #6366f1;
+            --accent-secondary: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(ellipse at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 90% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+
+        .logo-container {
+            padding: 0 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .user-section {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .user-email {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 1rem 0;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--accent-primary);
+            border-left-color: var(--accent-primary);
+        }
+
+        .nav-icon {
+            font-size: 1.2rem;
+        }
+
+        .logout-section {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-content.expanded {
+            margin-left: 0;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .search-bar {
+            position: relative;
+        }
+
+        .search-input {
+            width: 350px;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        /* View Container */
+        .view {
+            padding: 2rem;
+            display: none; /* Controlado pelo JS */
+        }
+        
+        .view.active {
+            display: block;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.2);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .stat-title {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .stat-change {
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .stat-change.positive {
+            color: var(--success);
+        }
+
+        .stat-change.negative {
+            color: var(--danger);
+        }
+
+        /* Projects Section */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .project-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.2);
+            border-color: var(--accent-primary);
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .project-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .project-type {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .project-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .project-body {
+            margin: 1rem 0;
+        }
+
+        .project-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .info-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.75rem;
+            border-radius: 8px;
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .info-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .project-footer {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 0.4rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-ativo {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-em-desenvolvimento {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--info);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .status-suspenso {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .status-finalizado {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--accent-primary);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-card);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-icon {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-icon:hover {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--bg-modal);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: var(--danger);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-footer {
+            padding: 2rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        /* Form Elements */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-hint {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .form-warning {
+            color: var(--warning);
+            background: rgba(245, 158, 11, 0.1);
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Login Screen */
+        .login-screen {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .login-box {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 1.5rem;
+        }
+
+        .login-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .search-input {
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .view { /* dashboard se torna view */
+                padding: 1rem;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .search-bar {
+                display: none;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                margin: 0;
+                max-height: 100vh;
+                border-radius: 0;
+            }
+        }
+
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Project Details View */
+        .detail-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .detail-section {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .detail-section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .detail-value {
+            color: var(--text-primary);
+            font-weight: 500;
+            text-align: right;
+        }
+
+        .detail-value a {
+            color: var(--accent-primary);
+            text-decoration: none;
+        }
+
+        .detail-value a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+        <div id="loginScreen" class="screen active">
+        <div class="login-screen">
+            <div class="login-box">
+                <div class="login-logo">🔷</div>
+                <h1 class="login-title">Victorino.eng</h1>
+                <p class="login-subtitle">Sistema Profissional de Gestão de Projetos</p>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <input type="email" id="emailLogin" class="form-input" placeholder="E-mail" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="passwordLogin" class="form-input" placeholder="Senha" required>
+                        <p class="form-hint">⚠️ Login simulado - qualquer credencial funciona</p>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        Acessar Sistema
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+        <div id="dashboardScreen" class="screen">
+                <aside class="sidebar" id="sidebar">
+            <div class="logo-container">
+                <div class="logo">
+                    <div class="logo-icon">🔷</div>
+                    <span>Victorino.eng</span>
+                </div>
+            </div>
+
+            <div class="user-section">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div class="user-info">
+                    <div class="user-name">Usuário</div>
+                    <div class="user-email" id="sidebarUserEmail"></div>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                                <div class="nav-item active" data-view="dashboardView">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </div>
+                <div class="nav-item" data-view="projectsView">
+                    <span class="nav-icon">📁</span>
+                    <span>Projetos</span>
+                </div>
+                <div class="nav-item" data-view="reportsView">
+                    <span class="nav-icon">📈</span>
+                    <span>Relatórios</span>
+                </div>
+            </nav>
+
+            <div class="logout-section">
+                <button id="logoutBtn" class="btn btn-secondary" style="width: 100%;">
+                    🚪 Sair
+                </button>
+            </div>
+        </aside>
+
+                <main class="main-content" id="mainContent">
+                        <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle">☰</button>
+                    <div class="search-bar">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" class="search-input" id="searchInput" placeholder="Buscar projetos...">
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="newProjectBtn">
+                        ➕ Novo Projeto
+                    </button>
+                </div>
+            </header>
+
+                        <div id="dashboardView" class="view active">
+                <h1 class="page-title">Dashboard</h1>
+
+                                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-title">Total de Projetos</div>
+                                <div class="stat-value" id="totalProjects">0</div>
+                            </div>
+                            <div class="stat-icon" style="background: rgba(99, 102, 241, 0.15); color: var(--accent-primary);">📁</div>
+                        </div>
+                        <div class="stat-change positive">
+                            <span>↗</span>
+                            <span>Todos os projetos</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-title">Projetos Ativos</div>
+                                <div class="stat-value" id="activeProjects">0</div>
+                            </div>
+                            <div class="stat-icon" style="background: rgba(16, 185, 129, 0.15); color: var(--success);">✅</div>
+                        </div>
+                        <div class="stat-change positive">
+                            <span>↗</span>
+                            <span>Em andamento</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-title">Valor Total</div>
+                                <div class="stat-value" id="totalValue">R$ 0,00</div>
+                            </div>
+                            <div class="stat-icon" style="background: rgba(16, 185, 129, 0.15); color: var(--success);">💰</div>
+                        </div>
+                        <div class="stat-change positive">
+                            <span>↗</span>
+                            <span>Faturamento total</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-title">Finalizados</div>
+                                <div class="stat-value" id="completedProjects">0</div>
+                            </div>
+                            <div class="stat-icon" style="background: rgba(139, 92, 246, 0.15); color: var(--accent-secondary);">🎯</div>
+                        </div>
+                        <div class="stat-change">
+                            <span>Projetos concluídos</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h2 class="section-title">Projetos Recentes</h2>
+                </div>
+                                <div id="dashboardProjectsList" class="projects-grid">
+                                    </div>
+            </div>
+            
+            <div id="projectsView" class="view hidden">
+                <h1 class="page-title">Gerenciamento de Projetos</h1>
+                <div class="section-header">
+                    <h2 class="section-title">Todos os Projetos</h2>
+                    </div>
+                <div id="projectsList" class="projects-grid">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Carregando projetos...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="reportsView" class="view hidden">
+                <h1 class="page-title">Relatórios e Análises</h1>
+                <div class="empty-state">
+                    <div class="empty-icon">📈</div>
+                    <h3 class="empty-title">Módulo de Relatórios</h3>
+                    <p>Funcionalidade em desenvolvimento. Em breve, gráficos e análises avançadas!</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+        <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Novo Projeto</h2>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <form id="projectForm">
+                <div class="modal-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Nome do Cliente *</label>
+                            <input type="text" id="clientName" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tipo de Sistema *</label>
+                            <select id="systemType" class="form-select" required>
+                                <option value="">Selecione...</option>
+                                <option value="PDV">Sistema PDV</option>
+                                <option value="Site Institucional">Site Institucional</option>
+                                <option value="E-commerce">E-commerce</option>
+                                <option value="Sistema de Gestão">Sistema de Gestão</option>
+                                <option value="Landing Page">Landing Page</option>
+                                <option value="Aplicativo Mobile">Aplicativo Mobile</option>
+                                <option value="API/Backend">API/Backend</option>
+                                <option value="Outro">Outro</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Valor Total (R$) *</label>
+                            <input type="text" id="totalValue" class="form-input" required placeholder="Ex: 1250,50">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Forma de Pagamento *</label>
+                            <select id="paymentMethod" class="form-select" required>
+                                <option value="">Selecione...</option>
+                                <option value="PIX">PIX</option>
+                                <option value="Cartão de Crédito">Cartão de Crédito</option>
+                                <option value="Boleto">Boleto</option>
+                                <option value="Transferência">Transferência</option>
+                                <option value="Depósito">Depósito</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Data de Venda do Projeto *</label>
+                            <input type="date" id="saleDate" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Status do Projeto *</label>
+                            <select id="projectStatus" class="form-select" required>
+                                <option value="">Selecione...</option>
+                                <option value="Ativo">Ativo</option>
+                                <option value="Em Desenvolvimento">Em Desenvolvimento</option>
+                                <option value="Suspenso">Suspenso</option>
+                                <option value="Finalizado">Finalizado</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Data de Renovação (Domínio)</label>
+                            <input type="date" id="expirationDate" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">URL/Domínio</label>
+                            <input type="url" id="systemUrl" class="form-input" placeholder="https://exemplo.com">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Link do Contrato</label>
+                        <input type="url" id="contractLink" class="form-input" placeholder="https://drive.google.com/...">
+                    </div>
+
+                    <div class="form-warning">
+                        ⚠️ <strong>Atenção:</strong> Credenciais são armazenadas localmente. Para maior segurança, considere usar um gerenciador de senhas dedicado.
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Usuário do Banco de Dados</label>
+                            <input type="text" id="dbUser" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Senha do Banco de Dados</label>
+                            <input type="password" id="dbPassword" class="form-input">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Observações</label>
+                        <textarea id="notes" class="form-textarea" placeholder="Notas adicionais sobre o projeto..."></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">💾 Salvar Projeto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+        <div id="viewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Detalhes do Projeto</h2>
+                <button class="modal-close" id="closeViewModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="projectDetails" class="detail-grid"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="closeViewBtn">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== CONFIGURAÇÃO E VARIÁVEIS GLOBAIS =====
+        const STORAGE_KEYS = {
+            projects: 'crmlite_projects',
+            user: 'crmlite_user'
+        };
+
+        let currentUser = null;
+        let allProjects = [];
+        let editingProjectId = null;
+
+        // ===== REFERÊNCIAS DO DOM =====
+        const screens = {
+            login: document.getElementById('loginScreen'),
+            dashboard: document.getElementById('dashboardScreen')
+        };
+        
+        // NOVAS REFERÊNCIAS DE VIEWS
+        const views = {
+            dashboardView: document.getElementById('dashboardView'),
+            projectsView: document.getElementById('projectsView'),
+            reportsView: document.getElementById('reportsView')
+        };
+
+        const modals = {
+            project: document.getElementById('projectModal'),
+            view: document.getElementById('viewModal')
+        };
+
+        const forms = {
+            login: document.getElementById('loginForm'),
+            project: document.getElementById('projectForm')
+        };
+
+        // ===== INICIALIZAÇÃO =====
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeApp();
+            setupEventListeners();
+        });
+
+        function initializeApp() {
+            checkAuthState();
+        }
+
+        // ===== AUTENTICAÇÃO =====
+        function checkAuthState() {
+            const savedUser = localStorage.getItem(STORAGE_KEYS.user);
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showDashboard();
+            } else {
+                showLogin();
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('emailLogin').value;
+            
+            if (email.trim()) {
+                currentUser = {
+                    uid: 'user_' + Date.now(),
+                    email: email,
+                    name: email.split('@')[0]
+                };
+                localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(currentUser));
+                showDashboard();
+            }
+        }
+
+        function handleLogout() {
+            if (confirm('Deseja realmente sair do sistema?')) {
+                localStorage.removeItem(STORAGE_KEYS.user);
+                currentUser = null;
+                allProjects = [];
+                showLogin();
+            }
+        }
+
+        // ===== NAVEGAÇÃO DE TELAS PRINCIPAIS (Login/Dashboard) =====
+        function showLogin() {
+            screens.login.classList.add('active');
+            screens.dashboard.classList.remove('active');
+            forms.login.reset();
+        }
+
+        function showDashboard() {
+            screens.login.classList.remove('active');
+            screens.dashboard.classList.add('active');
+            
+            // Atualizar informações do usuário
+            const userEmail = currentUser.email;
+            const userInitial = userEmail.charAt(0).toUpperCase();
+            document.getElementById('sidebarUserEmail').textContent = userEmail;
+            document.getElementById('userAvatar').textContent = userInitial;
+            
+            loadProjects();
+            // Inicia na view Dashboard
+            navigateToView('dashboardView');
+        }
+        
+        // ===== LÓGICA DE NAVEGAÇÃO ENTRE AS VIEWS INTERNAS (Dashboard, Projetos, Relatórios) =====
+        function navigateToView(viewId) {
+            // Esconde todas as views internas
+            Object.keys(views).forEach(id => {
+                if (views[id]) {
+                    views[id].classList.remove('active');
+                    views[id].classList.add('hidden');
+                }
+            });
+
+            // Mostra a view selecionada
+            const targetView = views[viewId];
+            if (targetView) {
+                targetView.classList.remove('hidden');
+                targetView.classList.add('active');
+            }
+            
+            // Recarrega os projetos apenas se estiver nas views Dashboard ou Projetos
+            if (viewId === 'dashboardView' || viewId === 'projectsView') {
+                loadProjects();
+            }
+
+            // Esconde a sidebar no mobile após a navegação
+            if (window.innerWidth <= 1024) {
+                document.getElementById('sidebar').classList.remove('active');
+            }
+        }
+
+
+        // ===== GERENCIAMENTO DE PROJETOS =====
+        function loadProjects() {
+            const stored = localStorage.getItem(STORAGE_KEYS.projects);
+            allProjects = stored ? JSON.parse(stored) : [];
+            allProjects.sort((a, b) => (b.updatedAt || b.createdAt || 0) - (a.updatedAt || a.createdAt || 0));
+            
+            displayProjects(allProjects);
+            updateStats(allProjects);
+        }
+
+        function saveProjects() {
+            localStorage.setItem(STORAGE_KEYS.projects, JSON.stringify(allProjects));
+        }
+        
+        // Função atualizada para exibir em ambas as listas (Dashboard e Projetos)
+        function displayProjects(projects) {
+            const listAllContainer = document.getElementById('projectsList');
+            const listDashboardContainer = document.getElementById('dashboardProjectsList');
+            
+            // Determina os projetos para o Dashboard (ex: 5 mais recentes)
+            const recentProjects = projects.slice(0, 5);
+            
+            // Função auxiliar para gerar o HTML do cartão
+            const generateProjectHtml = (project) => `
+                <div class="project-card" data-id="${project.id}">
+                    <div class="project-header">
+                        <div>
+                            <h3 class="project-title">${escapeHtml(project.clientName)}</h3>
+                            <p class="project-type">${escapeHtml(project.systemType)}</p>
+                        </div>
+                        <div class="project-actions">
+                            <button class="btn-icon" onclick="viewProject('${project.id}')" title="Ver detalhes">👁️</button>
+                            <button class="btn-icon" onclick="editProject('${project.id}')" title="Editar">✏️</button>
+                            <button class="btn-icon" onclick="deleteProject('${project.id}')" title="Excluir">🗑️</button>
+                        </div>
+                    </div>
+                    
+                    <div class="project-body">
+                        <div class="project-info-grid">
+                            <div class="info-item">
+                                <div class="info-label">Valor</div>
+                                <div class="info-value">R$ ${formatMoney(project.totalValue)}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Pagamento</div>
+                                <div class="info-value">${escapeHtml(project.paymentMethod)}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-footer">
+                        <span class="status-badge status-${normalizeStatus(project.projectStatus)}">
+                            ${escapeHtml(project.projectStatus)}
+                        </span>
+                        ${project.expirationDate ? `
+                            <span style="font-size: 0.85rem; color: var(--text-secondary);" title="Renovação do Domínio">
+                                📅 ${formatDate(project.expirationDate)}
+                            </span>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            
+            const emptyStateHtml = `
+                <div class="empty-state" style="grid-column: 1/-1;">
+                    <div class="empty-icon">📂</div>
+                    <h3 class="empty-title">Nenhum projeto encontrado</h3>
+                    <p>Clique em "Novo Projeto" para começar</p>
+                </div>
+            `;
+            
+            if (projects.length === 0) {
+                listAllContainer.innerHTML = emptyStateHtml;
+                listDashboardContainer.innerHTML = emptyStateHtml;
+                return;
+            }
+
+            // Renderiza todos os projetos na View Projetos
+            listAllContainer.innerHTML = projects.map(generateProjectHtml).join('');
+            
+            // Renderiza os projetos recentes na View Dashboard
+            listDashboardContainer.innerHTML = recentProjects.map(generateProjectHtml).join('');
+        }
+
+        function updateStats(projects) {
+            document.getElementById('totalProjects').textContent = projects.length;
+            
+            const active = projects.filter(p => 
+                p.projectStatus === 'Ativo' || p.projectStatus === 'Em Desenvolvimento'
+            ).length;
+            document.getElementById('activeProjects').textContent = active;
+            
+            const completed = projects.filter(p => p.projectStatus === 'Finalizado').length;
+            document.getElementById('completedProjects').textContent = completed;
+            
+            const total = projects.reduce((sum, p) => sum + parseFloat(p.totalValue || 0), 0);
+            document.getElementById('totalValue').textContent = `R$ ${formatMoney(total)}`;
+        }
+
+        function handleProjectSubmit(e) {
+            e.preventDefault();
+            
+            const rawTotalValue = document.getElementById('totalValue').value;
+            
+            // CORREÇÃO: Substitui vírgula por ponto para que parseFloat funcione.
+            const sanitizedValue = rawTotalValue.replace(',', '.');
+            const parsedTotalValue = parseFloat(sanitizedValue) || 0; 
+            
+            const projectData = {
+                clientName: document.getElementById('clientName').value,
+                systemType: document.getElementById('systemType').value,
+                
+                // Valor Corrigido
+                totalValue: parsedTotalValue, 
+                
+                paymentMethod: document.getElementById('paymentMethod').value,
+                projectStatus: document.getElementById('projectStatus').value,
+                systemUrl: document.getElementById('systemUrl').value,
+                
+                // Campo Data de Venda
+                saleDate: document.getElementById('saleDate').value, 
+                
+                expirationDate: document.getElementById('expirationDate').value,
+                contractLink: document.getElementById('contractLink').value,
+                dbUser: document.getElementById('dbUser').value,
+                dbPassword: document.getElementById('dbPassword').value,
+                notes: document.getElementById('notes').value,
+                userId: currentUser.uid,
+                updatedAt: Date.now()
+            };
+
+            if (editingProjectId) {
+                const index = allProjects.findIndex(p => p.id === editingProjectId);
+                if (index !== -1) {
+                    allProjects[index] = { ...allProjects[index], ...projectData };
+                }
+            } else {
+                projectData.id = 'proj_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                projectData.createdAt = Date.now();
+                allProjects.unshift(projectData);
+            }
+
+            saveProjects();
+            closeProjectModal();
+            loadProjects();
+            
+            // Se estiver na view de projetos, garante que a lista completa está atualizada
+            if (views.projectsView.classList.contains('active')) {
+                displayProjects(allProjects);
+            }
+        }
+
+        function editProject(projectId) {
+            const project = allProjects.find(p => p.id === projectId);
+            if (!project) return;
+
+            editingProjectId = projectId;
+            document.getElementById('modalTitle').textContent = 'Editar Projeto';
+            
+            document.getElementById('clientName').value = project.clientName;
+            document.getElementById('systemType').value = project.systemType;
+            
+            // CORREÇÃO: Ao carregar para edição, formata o número de volta para a string com vírgula para o usuário.
+            document.getElementById('totalValue').value = project.totalValue.toFixed(2).replace('.', ','); 
+            
+            document.getElementById('paymentMethod').value = project.paymentMethod;
+            document.getElementById('projectStatus').value = project.projectStatus;
+            document.getElementById('systemUrl').value = project.systemUrl || '';
+            
+            // Campo Data de Venda
+            document.getElementById('saleDate').value = project.saleDate || '';
+            
+            document.getElementById('expirationDate').value = project.expirationDate || '';
+            document.getElementById('contractLink').value = project.contractLink || '';
+            document.getElementById('dbUser').value = project.dbUser || '';
+            document.getElementById('dbPassword').value = project.dbPassword || '';
+            document.getElementById('notes').value = project.notes || '';
+
+            openProjectModal();
+        }
+
+        function deleteProject(projectId) {
+            if (!confirm('Deseja realmente excluir este projeto?')) return;
+
+            allProjects = allProjects.filter(p => p.id !== projectId);
+            saveProjects();
+            loadProjects();
+        }
+
+        function viewProject(projectId) {
+            const project = allProjects.find(p => p.id === projectId);
+            if (!project) return;
+
+            const detailsHtml = `
+                <div class="detail-section">
+                    <h3 class="detail-section-title">📋 Informações Gerais</h3>
+                    <div class="detail-row">
+                        <span class="detail-label">Cliente</span>
+                        <span class="detail-value">${escapeHtml(project.clientName)}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Tipo de Sistema</span>
+                        <span class="detail-value">${escapeHtml(project.systemType)}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status</span>
+                        <span class="detail-value">
+                            <span class="status-badge status-${normalizeStatus(project.projectStatus)}">
+                                ${escapeHtml(project.projectStatus)}
+                            </span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h3 class="detail-section-title">💰 Financeiro e Prazos</h3>
+                    <div class="detail-row">
+                        <span class="detail-label">Valor Total</span>
+                        <span class="detail-value">R$ ${formatMoney(project.totalValue)}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Forma de Pagamento</span>
+                        <span class="detail-value">${escapeHtml(project.paymentMethod)}</span>
+                    </div>
+                    ${project.saleDate ? `
+                    <div class="detail-row">
+                        <span class="detail-label">Data de Venda</span>
+                        <span class="detail-value">${formatDate(project.saleDate)}</span>
+                    </div>
+                    ` : ''}
+                    ${project.expirationDate ? `
+                    <div class="detail-row">
+                        <span class="detail-label">Renovação (Domínio)</span>
+                        <span class="detail-value">${formatDate(project.expirationDate)}</span>
+                    </div>
+                    ` : ''}
+                </div>
+
+                ${project.systemUrl || project.contractLink ? `
+                <div class="detail-section">
+                    <h3 class="detail-section-title">🔗 Links</h3>
+                    ${project.systemUrl ? `
+                    <div class="detail-row">
+                        <span class="detail-label">URL do Sistema</span>
+                        <span class="detail-value">
+                            <a href="${escapeHtml(project.systemUrl)}" target="_blank">${escapeHtml(project.systemUrl)}</a>
+                        </span>
+                    </div>
+                    ` : ''}
+                    ${project.contractLink ? `
+                    <div class="detail-row">
+                        <span class="detail-label">Contrato</span>
+                        <span class="detail-value">
+                            <a href="${escapeHtml(project.contractLink)}" target="_blank">Ver Contrato</a>
+                        </span>
+                    </div>
+                    ` : ''}
+                </div>
+                ` : ''}
+
+                ${project.dbUser ? `
+                <div class="detail-section">
+                    <h3 class="detail-section-title">🔐 Credenciais</h3>
+                    <div class="detail-row">
+                        <span class="detail-label">Usuário do BD</span>
+                        <span class="detail-value">${escapeHtml(project.dbUser)}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Senha do BD</span>
+                        <span class="detail-value">${project.dbPassword ? '••••••••' : 'Não informada'}</span>
+                    </div>
+                </div>
+                ` : ''}
+
+                ${project.notes ? `
+                <div class="detail-section">
+                    <h3 class="detail-section-title">📝 Observações</h3>
+                    <p style="color: var(--text-primary); line-height: 1.6;">${escapeHtml(project.notes).replace(/\n/g, '<br>')}</p>
+                </div>
+                ` : ''}
+            `;
+
+            document.getElementById('projectDetails').innerHTML = detailsHtml;
+            modals.view.classList.add('active');
+        }
+
+        // ===== BUSCA =====
+        function handleSearch() {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            
+            if (!term) {
+                displayProjects(allProjects);
+                return;
+            }
+
+            const filtered = allProjects.filter(p => 
+                p.clientName.toLowerCase().includes(term) ||
+                p.systemType.toLowerCase().includes(term) ||
+                p.projectStatus.toLowerCase().includes(term) ||
+                (p.notes || '').toLowerCase().includes(term)
+            );
+
+            // A busca só faz sentido na tela de projetos, mas aplicamos em ambas as listas
+            displayProjects(filtered); 
+        }
+
+        // ===== CONTROLE DE MODAIS =====
+        function openProjectModal() {
+            modals.project.classList.add('active');
+        }
+
+        function closeProjectModal() {
+            modals.project.classList.remove('active');
+            forms.project.reset();
+            editingProjectId = null;
+            document.getElementById('modalTitle').textContent = 'Novo Projeto';
+        }
+
+        function closeViewModal() {
+            modals.view.classList.remove('active');
+        }
+
+        // ===== EVENT LISTENERS =====
+        function setupEventListeners() {
+            // Login
+            forms.login.addEventListener('submit', handleLogin);
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+
+            // Projetos
+            document.getElementById('newProjectBtn').addEventListener('click', () => {
+                editingProjectId = null;
+                forms.project.reset();
+                // Preenche a Data de Venda com a data atual por conveniência
+                document.getElementById('saleDate').valueAsDate = new Date();
+                
+                document.getElementById('modalTitle').textContent = 'Novo Projeto';
+                openProjectModal();
+            });
+            forms.project.addEventListener('submit', handleProjectSubmit);
+
+            // Busca
+            document.getElementById('searchInput').addEventListener('input', handleSearch);
+
+            // Modais
+            document.getElementById('closeModal').addEventListener('click', closeProjectModal);
+            document.getElementById('cancelBtn').addEventListener('click', closeProjectModal);
+            document.getElementById('closeViewModal').addEventListener('click', closeViewModal);
+            document.getElementById('closeViewBtn').addEventListener('click', closeViewModal);
+
+            modals.project.addEventListener('click', e => {
+                if (e.target === modals.project) closeProjectModal();
+            });
+
+            modals.view.addEventListener('click', e => {
+                if (e.target === modals.view) closeViewModal();
+            });
+
+            // Menu Toggle (Mobile)
+            document.getElementById('menuToggle').addEventListener('click', () => {
+                document.getElementById('sidebar').classList.toggle('active');
+            });
+
+            // Navegação do Menu (CORRIGIDO)
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    // Atualiza o estado visual
+                    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Altera a view principal
+                    const viewId = this.getAttribute('data-view');
+                    navigateToView(viewId);
+                });
+            });
+        }
+
+        // ===== UTILITÁRIOS =====
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatMoney(value) {
+            // Garante que o valor seja um número válido antes de formatar
+            const numericValue = parseFloat(value) || 0;
+            return numericValue.toFixed(2)
+                .replace('.', ',')
+                .replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const [year, month, day] = dateStr.split('-');
+            return `${day}/${month}/${year}`;
+        }
+
+        function normalizeStatus(status) {
+            return status.toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/\s+/g, '-');
+        }
+    </script>
+</body>
+</html>
+
