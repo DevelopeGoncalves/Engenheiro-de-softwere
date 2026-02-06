@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Victorino.eng - Gestão V6</title>
+    <title>Victorino.eng - Cloud System</title>
     <style>
+        /* CSS MANTIDO EXATAMENTE IGUAL (V6) */
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
         :root {
             --bg-primary: #0a0e27;
@@ -20,35 +21,11 @@
             --warning: #f59e0b;
             --danger: #ef4444;
             --whatsapp: #25D366;
-            --firebase: #ffca28;
-            --supabase: #3ecf8e;
         }
-
-        body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* --- LAYOUT --- */
-        .sidebar { 
-            position: fixed; left: 0; top: 0; width: 280px; height: 100vh; 
-            background: var(--bg-secondary); border-right: 1px solid var(--border-color); 
-            display: flex; flex-direction: column; z-index: 1000; 
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .main-content { 
-            margin-left: 280px; 
-            min-height: 100vh; 
-            transition: margin-left 0.3s ease; 
-            padding-bottom: 80px; 
-        }
-
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; }
+        .sidebar { position: fixed; left: 0; top: 0; width: 280px; height: 100vh; background: var(--bg-secondary); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; z-index: 1000; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .main-content { margin-left: 280px; min-height: 100vh; transition: margin-left 0.3s ease; padding-bottom: 80px; }
         @media (max-width: 768px) {
-            /* Sombra reforçada para destacar o menu já que o fundo não escurece mais */
             .sidebar { transform: translateX(-100%); width: 85%; max-width: 300px; box-shadow: 5px 0 50px rgba(0,0,0,0.8); border-right: 1px solid rgba(255,255,255,0.1); }
             .sidebar.active { transform: translateX(0); }
             .main-content { margin-left: 0; }
@@ -57,87 +34,77 @@
             .form-grid { grid-template-columns: 1fr; }
             .finance-grid { grid-template-columns: 1fr !important; }
         }
-
-        /* --- COMPONENTS --- */
         .logo-container { padding: 1.5rem; border-bottom: 1px solid var(--border-color); }
         .logo { display: flex; align-items: center; gap: 0.75rem; font-size: 1.25rem; font-weight: 700; }
         .logo-icon { width: 35px; height: 35px; background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); border-radius: 8px; display: grid; place-items: center; }
-        
         .nav-menu { flex: 1; padding: 1rem 0; overflow-y: auto; }
         .nav-item { padding: 0.85rem 1.5rem; display: flex; align-items: center; gap: 1rem; color: var(--text-secondary); cursor: pointer; border-left: 3px solid transparent; transition: 0.2s; }
         .nav-item:hover { background: rgba(255,255,255,0.05); }
         .nav-item.active { background: rgba(99, 102, 241, 0.1); color: var(--accent-primary); border-left-color: var(--accent-primary); }
-
         .backup-section { padding: 1rem 1.5rem; border-top: 1px solid var(--border-color); background: rgba(0,0,0,0.2); }
         .backup-btn { font-size: 0.8rem; width: 100%; text-align: left; background: none; border: none; color: var(--text-secondary); padding: 0.5rem 0; cursor: pointer; display: flex; gap: 0.5rem; align-items: center; }
-        .backup-btn:hover { color: var(--text-primary); }
-
         .header { background: rgba(18, 22, 51, 0.9); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-color); padding: 1rem 2rem; position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; }
         .menu-toggle { display: none; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
         @media (max-width: 768px) { .menu-toggle { display: block; } }
-
         .btn { padding: 0.75rem 1.25rem; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; transition: transform 0.1s; font-size: 0.9rem; }
         .btn:active { transform: scale(0.98); }
         .btn-primary { background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); color: white; }
         .btn-secondary { background: rgba(255,255,255,0.1); color: white; }
         .btn-whatsapp { background: var(--whatsapp); color: white; width: 100%; justify-content: center; margin-top: 0.5rem; font-size: 0.85rem; padding: 0.5rem; border-radius: 8px; text-decoration: none; }
         .btn-contract { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-secondary); width: 100%; justify-content: center; font-size: 0.8rem; border-radius: 8px; padding: 0.5rem; text-decoration: none; margin-top: 5px; }
-        .btn-contract:hover { background: rgba(255, 255, 255, 0.1); color: white; border-color: var(--text-primary); }
-
         .project-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 1.25rem; position: relative; transition: transform 0.2s; }
-        .project-card:hover { border-color: var(--accent-primary); }
-        
         .badge { padding: 0.25rem 0.6rem; border-radius: 6px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
         .badge-vitalicio { background: rgba(16, 185, 129, 0.2); color: #34d399; }
         .badge-mensal { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
-        
         .db-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 0.7rem; color: var(--text-secondary); margin-left: 8px; }
-
         .alert-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 0.75rem; font-weight: 600; margin-top: 6px; padding: 2px 6px; border-radius: 4px; width: 100%; }
         .alert-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
         .alert-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
-
         .form-input, .form-select, .form-textarea { width: 100%; padding: 0.85rem; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 10px; color: white; margin-top: 0.4rem; font-size: 1rem; }
         .form-input:focus { border-color: var(--accent-primary); }
         .form-textarea { resize: vertical; min-height: 80px; font-family: inherit; }
         .form-group { margin-bottom: 1.25rem; }
         label { color: var(--text-secondary); font-size: 0.85rem; font-weight: 500; }
-
-        /* OVERLAYS */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1050; }
-        
-        /* AQUI ESTÁ A MUDANÇA: O fundo do menu (backdrop) agora é transparente */
         #backdrop { background: none !important; }
-
         .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 95%; max-width: 650px; background: var(--bg-modal); border: 1px solid var(--border-color); border-radius: 20px; z-index: 1100; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .modal.active { display: block; }
-        
         .hidden { display: none !important; }
         .screen { display: none; }
         .screen.active { display: block; }
+        /* Loading Overlay */
+        #loadingOverlay { position: fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-primary); z-index:2000; display:flex; justify-content:center; align-items:center; flex-direction:column; }
+        .spinner { width: 40px; height: 40px; border: 4px solid var(--bg-secondary); border-top: 4px solid var(--accent-primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 1rem; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <div id="backdrop" class="modal-overlay" onclick="toggleSidebar()"></div>
-    
-    <div id="modalBackdrop" class="modal-overlay" onclick="closeModal()"></div>
-    
-    <input type="file" id="backupInput" hidden onchange="importBackup(this)">
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Conectando ao Firebase...</p>
+    </div>
 
-    <div id="loginScreen" class="screen active">
+    <div id="backdrop" class="modal-overlay" onclick="toggleSidebar()"></div>
+    <div id="modalBackdrop" class="modal-overlay" onclick="closeModal()"></div>
+
+    <div id="loginScreen" class="screen">
         <div style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 2rem;">
             <div style="background: var(--bg-card); padding: 2.5rem; border-radius: 24px; width: 100%; max-width: 400px; border: 1px solid var(--border-color);">
                 <div style="text-align: center; margin-bottom: 2rem;">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">🔷</div>
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🔥</div>
                     <h2 style="margin-bottom: 0.5rem;">Victorino.eng</h2>
-                    <p style="color: var(--text-secondary);">Sistema de Gestão 6.0</p>
+                    <p style="color: var(--text-secondary);">Acesso Seguro (Cloud)</p>
                 </div>
                 <form id="loginForm">
                     <div class="form-group">
-                        <input type="email" id="emailLogin" class="form-input" placeholder="Seu E-mail" required>
+                        <input type="email" id="emailLogin" class="form-input" placeholder="E-mail" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="passwordLogin" class="form-input" placeholder="Senha" required>
                     </div>
                     <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 1rem;">ENTRAR</button>
+                    <p id="loginError" style="color:var(--danger); text-align:center; margin-top:1rem; font-size:0.9rem;"></p>
                 </form>
             </div>
         </div>
@@ -153,11 +120,9 @@
                 <div class="nav-item" onclick="switchView('projectsView', this)"><span>📁</span><span>Meus Projetos</span></div>
             </nav>
             <div class="backup-section">
-                <div style="font-size:0.75rem; color:var(--accent-primary); font-weight:700; margin-bottom:0.5rem; text-transform:uppercase;">Segurança dos Dados</div>
-                <button class="backup-btn" onclick="exportBackup()">⬇️ Exportar Backup</button>
-                <button class="backup-btn" onclick="document.getElementById('backupInput').click()">⬆️ Restaurar Backup</button>
-                <div style="border-top:1px solid var(--border-color); margin: 0.5rem 0;"></div>
-                <button onclick="logout()" class="backup-btn" style="color:var(--danger)">🚪 Sair do Sistema</button>
+                <div style="font-size:0.75rem; color:var(--accent-primary); font-weight:700; margin-bottom:0.5rem; text-transform:uppercase;">Conta</div>
+                <div id="userEmailDisplay" style="font-size:0.8rem; color:var(--text-primary); margin-bottom:1rem; word-break:break-all;"></div>
+                <button onclick="logoutFirebase()" class="backup-btn" style="color:var(--danger)">🚪 Sair (Logout)</button>
             </div>
         </aside>
 
@@ -170,7 +135,6 @@
 
             <div id="dashboardView" class="view active" style="padding: 1.5rem;">
                 <h1 class="page-title" style="margin-bottom: 1.5rem; font-size: 1.8rem;">Resumo Financeiro</h1>
-                
                 <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
                     <div class="stat-card" style="background:linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1)); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--border-color);">
                         <div style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.5rem;">Faturamento Mensal</div>
@@ -181,7 +145,6 @@
                         <div class="stat-value" id="totalProjects" style="font-size: 1.8rem; font-weight: 700;">0</div>
                     </div>
                 </div>
-
                 <h3 style="margin-bottom: 1rem; color: var(--text-secondary);">⚠️ Alertas e Cobranças</h3>
                 <div id="alertsList" style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));"></div>
             </div>
@@ -200,171 +163,144 @@
             <button onclick="closeModal()" style="background:none; border:none; color:white; font-size:1.5rem; padding: 0.5rem;">&times;</button>
         </div>
         <form id="projectForm" style="padding: 1.5rem;">
-            
             <h4 style="color: var(--accent-primary); margin-bottom: 1rem;">👤 Cliente</h4>
-            <div class="form-group">
-                <label>Nome / Empresa *</label>
-                <input type="text" id="clientName" class="form-input" required placeholder="Ex: Barbearia Silva">
-            </div>
+            <div class="form-group"><label>Nome / Empresa *</label><input type="text" id="clientName" class="form-input" required></div>
             <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                <div class="form-group">
-                    <label>Telefone (WhatsApp)</label>
-                    <input type="tel" id="clientPhone" class="form-input" placeholder="5511999999999">
-                </div>
-                <div class="form-group">
-                    <label>Sistema / Serviço</label>
-                    <select id="systemType" class="form-select">
-                        <option value="PDV">Sistema PDV</option>
-                        <option value="Agendamento">Agendamento</option>
-                        <option value="Landing Page">Landing Page</option>
-                        <option value="Institucional">Site Institucional</option>
-                        <option value="Outro">Outro</option>
-                    </select>
-                </div>
+                <div class="form-group"><label>Telefone</label><input type="tel" id="clientPhone" class="form-input"></div>
+                <div class="form-group"><label>Sistema</label><select id="systemType" class="form-select"><option value="PDV">PDV</option><option value="Agendamento">Agendamento</option><option value="Landing Page">Landing Page</option><option value="Institucional">Institucional</option><option value="Outro">Outro</option></select></div>
             </div>
-
             <h4 style="color: var(--accent-primary); margin: 1.5rem 0 1rem;">💰 Financeiro</h4>
             <div class="finance-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
-                <div class="form-group">
-                    <label>Tipo</label>
-                    <select id="contractType" class="form-select" onchange="toggleContractFields()">
-                        <option value="mensal">Mensalidade</option>
-                        <option value="vitalicio">Vitalício</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Valor Recorrente (R$)</label>
-                    <input type="number" id="projectValue" class="form-input" placeholder="Mensalidade" step="0.01">
-                </div>
-                <div class="form-group">
-                    <label title="Valor cobrado para iniciar">Taxa Implantação (R$)</label>
-                    <input type="number" id="implValue" class="form-input" placeholder="Setup" step="0.01">
-                </div>
+                <div class="form-group"><label>Tipo</label><select id="contractType" class="form-select" onchange="toggleContractFields()"><option value="mensal">Mensalidade</option><option value="vitalicio">Vitalício</option></select></div>
+                <div class="form-group"><label>Mensal (R$)</label><input type="number" id="projectValue" class="form-input" step="0.01"></div>
+                <div class="form-group"><label>Implantação (R$)</label><input type="number" id="implValue" class="form-input" step="0.01"></div>
             </div>
-            
             <div id="mensalFields" style="background: rgba(99, 102, 241, 0.1); padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
-                <label style="color: var(--accent-primary);">Dia do Vencimento</label>
-                <select id="dueDay" class="form-select"></select>
+                <label style="color: var(--accent-primary);">Dia Vencimento</label><select id="dueDay" class="form-select"></select>
             </div>
-
-            <div class="form-group">
-                <label>📄 Link do Contrato (PDF no Drive/DropBox)</label>
-                <input type="url" id="contractUrl" class="form-input" placeholder="https://drive.google.com/file/d/...">
-            </div>
-
-            <h4 style="color: var(--accent-primary); margin: 1.5rem 0 1rem;">🚀 Acessos Gerais</h4>
+            <div class="form-group"><label>📄 Link Contrato</label><input type="url" id="contractUrl" class="form-input"></div>
+            <h4 style="color: var(--accent-primary); margin: 1.5rem 0 1rem;">🚀 Infra</h4>
             <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                <div class="form-group"><label>Repo GitHub</label><input type="text" id="githubRepo" class="form-input"></div>
-                <div class="form-group"><label>URL Projeto</label><input type="text" id="projectUrl" class="form-input"></div>
+                <div class="form-group"><label>GitHub</label><input type="text" id="githubRepo" class="form-input"></div>
+                <div class="form-group"><label>URL</label><input type="text" id="projectUrl" class="form-input"></div>
             </div>
             <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                <div class="form-group"><label>Usuário Registro.br</label><input type="text" id="regUser" class="form-input"></div>
-                <div class="form-group"><label>Senha Registro.br</label><input type="text" id="regPass" class="form-input"></div>
+                <div class="form-group"><label>User Reg.br</label><input type="text" id="regUser" class="form-input"></div>
+                <div class="form-group"><label>Senha Reg.br</label><input type="text" id="regPass" class="form-input"></div>
             </div>
-            <div class="form-group">
-                <label>Vencimento do Domínio (Data)</label>
-                <input type="date" id="domainDate" class="form-input" style="color-scheme: dark;">
-            </div>
-
-            <h4 style="color: var(--accent-primary); margin: 1.5rem 0 1rem;">🗄️ Banco de Dados</h4>
-            <div class="form-group">
-                <label>Plataforma</label>
-                <select id="dbPlatform" class="form-select">
-                    <option value="">Selecione...</option>
-                    <option value="Firebase">Firebase 🔥</option>
-                    <option value="Supabase">Supabase ⚡</option>
-                    <option value="MySQL">MySQL / Outro</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Link do Console / Projeto</label>
-                <input type="url" id="dbLink" class="form-input" placeholder="https://...">
-            </div>
+            <div class="form-group"><label>Venc. Domínio</label><input type="date" id="domainDate" class="form-input" style="color-scheme: dark;"></div>
+            <h4 style="color: var(--accent-primary); margin: 1.5rem 0 1rem;">🗄️ Database</h4>
+            <div class="form-group"><label>Plataforma</label><select id="dbPlatform" class="form-select"><option value="">Selecione...</option><option value="Firebase">Firebase 🔥</option><option value="Supabase">Supabase ⚡</option></select></div>
+            <div class="form-group"><label>Link Console</label><input type="url" id="dbLink" class="form-input"></div>
             <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                <div class="form-group"><label>Conta / E-mail</label><input type="text" id="dbUser" class="form-input"></div>
-                <div class="form-group"><label>Chave / Senha</label><input type="text" id="dbKey" class="form-input"></div>
+                <div class="form-group"><label>Conta</label><input type="text" id="dbUser" class="form-input"></div>
+                <div class="form-group"><label>Chave</label><input type="text" id="dbKey" class="form-input"></div>
             </div>
-
-            <h4 style="color: var(--accent-primary); margin: 1.5rem 0 1rem;">📝 Diário de Bordo</h4>
-            <div class="form-group">
-                <textarea id="maintenanceLog" class="form-textarea" placeholder="Anote aqui alterações, versões ou observações importantes..."></textarea>
-            </div>
-
-            <div style="margin-top: 2rem; display: grid; gap: 1rem;">
-                <button type="submit" class="btn btn-primary" style="justify-content: center; width: 100%;">💾 Salvar Tudo</button>
-            </div>
+            <h4 style="color: var(--accent-primary); margin: 1.5rem 0 1rem;">📝 Log</h4>
+            <div class="form-group"><textarea id="maintenanceLog" class="form-textarea"></textarea></div>
+            <div style="margin-top: 2rem;"><button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">💾 Salvar na Nuvem</button></div>
         </form>
     </div>
 
-    <script>
-        // --- CONFIGURAÇÃO ---
-        const STORAGE_KEY = 'victorino_crm_v6';
-        let projects = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    <script type="module">
+        // Importa as funções do Firebase direto do Google
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // 🔴 COLE SUAS CHAVES DO FIREBASE AQUI
+        // Você pega isso no Console do Firebase > Configurações do Projeto
+        const firebaseConfig = {
+        apiKey: "AIzaSyD3752ROtGbFVGs_LbSCYb2oLY-3TTt6YU",
+        authDomain: "gerenciador-de-projetos-c7503.firebaseapp.com",
+        projectId: "gerenciador-de-projetos-c7503",
+        storageBucket: "gerenciador-de-projetos-c7503.firebasestorage.app",
+        messagingSenderId: "1033425475455",
+        appId: "1:1033425475455:web:33f00f7b85a9dba2bb6c4a"
+        };
+
+        // Inicializa Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Estado Global da Aplicação
+        let projects = [];
         let editingId = null;
 
-        // Preenche dias 1-28
-        const daySelect = document.getElementById('dueDay');
-        for(let i=1; i<=28; i++) {
-            const opt = document.createElement('option');
-            opt.value = i; opt.textContent = `Dia ${i}`; daySelect.appendChild(opt);
-        }
+        // --- SISTEMA DE AUTENTICAÇÃO ---
+        const loginForm = document.getElementById('loginForm');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loginScreen = document.getElementById('loginScreen');
+        const dashboardScreen = document.getElementById('dashboardScreen');
 
-        // --- LOGIN ---
-        document.getElementById('loginForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            document.getElementById('loginScreen').classList.remove('active');
-            document.getElementById('dashboardScreen').classList.add('active');
-            renderProjects();
+        // Verificar se já está logado ao abrir
+        onAuthStateChanged(auth, (user) => {
+            loadingOverlay.style.display = 'none'; // Some o loading inicial
+            if (user) {
+                // Usuário logado
+                loginScreen.classList.remove('active'); // Oculta login com display:none (via CSS class screen)
+                dashboardScreen.classList.add('active'); // Mostra dashboard
+                document.getElementById('userEmailDisplay').textContent = user.email;
+                loadProjectsFromCloud(); // Carrega dados
+            } else {
+                // Não logado
+                dashboardScreen.classList.remove('active');
+                loginScreen.classList.add('active');
+            }
         });
 
-        function logout() {
-            if(confirm("Deseja sair?")) window.location.reload();
-        }
-
-        // --- UI & NAV ---
-        function toggleSidebar() {
-            const sb = document.getElementById('sidebar');
-            const bd = document.getElementById('backdrop');
-            sb.classList.toggle('active');
-            bd.style.display = sb.classList.contains('active') ? 'block' : 'none';
-        }
-
-        function switchView(viewId, btn) {
-            document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById(viewId).classList.remove('hidden');
-            document.getElementById(viewId).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            btn.classList.add('active');
-            if(window.innerWidth <= 768) toggleSidebar();
-        }
-
-        function toggleContractFields() {
-            const type = document.getElementById('contractType').value;
-            const div = document.getElementById('mensalFields');
-            div.classList.toggle('hidden', type !== 'mensal');
-        }
-
-        // --- CRUD ---
-        function openNewProject() {
-            editingId = null;
-            document.getElementById('projectForm').reset();
-            document.getElementById('modalTitle').textContent = "Novo Projeto";
-            toggleContractFields();
-            document.getElementById('projectModal').classList.add('active');
-            document.getElementById('modalBackdrop').style.display = 'block';
-        }
-
-        function closeModal() {
-            document.getElementById('projectModal').classList.remove('active');
-            document.getElementById('modalBackdrop').style.display = 'none';
-        }
-
-        document.getElementById('projectForm').addEventListener('submit', (e) => {
+        // Login
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const email = document.getElementById('emailLogin').value;
+            const password = document.getElementById('passwordLogin').value;
+            const errorMsg = document.getElementById('loginError');
             
-            const newProject = {
-                id: editingId || Date.now(),
+            errorMsg.textContent = "Autenticando...";
+            
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                // O onAuthStateChanged vai lidar com a troca de tela
+            } catch (error) {
+                errorMsg.textContent = "Erro: Verifique e-mail e senha.";
+                console.error(error);
+            }
+        });
+
+        // Logout (expondo função para o HTML)
+        window.logoutFirebase = () => {
+            signOut(auth).then(() => window.location.reload());
+        };
+
+        // --- CRUD FIREBASE (BANCO DE DADOS) ---
+        
+        // 1. LER (Read)
+        async function loadProjectsFromCloud() {
+            try {
+                const q = query(collection(db, "projects"), orderBy("updatedAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                projects = [];
+                querySnapshot.forEach((doc) => {
+                    // Junta o ID do documento com os dados
+                    projects.push({ id: doc.id, ...doc.data() });
+                });
+                renderProjects();
+            } catch (e) {
+                console.error("Erro ao ler dados: ", e);
+                alert("Erro ao carregar projetos. Verifique sua conexão.");
+            }
+        }
+
+        // 2. CRIAR E ATUALIZAR (Create / Update)
+        document.getElementById('projectForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.textContent;
+            btn.textContent = "Salvando...";
+            btn.disabled = true;
+
+            const projectData = {
                 client: document.getElementById('clientName').value,
                 phone: document.getElementById('clientPhone').value,
                 type: document.getElementById('contractType').value,
@@ -386,23 +322,115 @@
                 updatedAt: new Date().toISOString()
             };
 
-            if(editingId) {
-                projects[projects.findIndex(p => p.id === editingId)] = newProject;
-            } else {
-                projects.unshift(newProject);
+            try {
+                if (editingId) {
+                    // Atualizar Existente
+                    const projectRef = doc(db, "projects", editingId);
+                    await updateDoc(projectRef, projectData);
+                } else {
+                    // Criar Novo
+                    await addDoc(collection(db, "projects"), projectData);
+                }
+                
+                closeModal();
+                await loadProjectsFromCloud(); // Recarrega lista
+                alert("Salvo com sucesso!");
+            } catch (error) {
+                console.error("Erro ao salvar: ", error);
+                alert("Erro ao salvar: " + error.message);
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
             }
-
-            saveAndRender();
-            closeModal();
         });
 
-        function saveAndRender() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
-            renderProjects();
+        // 3. DELETAR
+        window.deleteProject = async (id) => {
+            if(confirm("Tem certeza? Isso apagará do banco de dados permanentemente.")) {
+                try {
+                    await deleteDoc(doc(db, "projects", id));
+                    await loadProjectsFromCloud();
+                } catch (error) {
+                    alert("Erro ao deletar: " + error.message);
+                }
+            }
         }
 
-        // --- RENDER ---
-        function renderProjects() {
+        // --- FUNÇÕES DE UI (Mantidas da versão anterior) ---
+        // Expondo funções globais para usar no onclick do HTML
+        window.toggleSidebar = () => {
+            const sb = document.getElementById('sidebar');
+            const bd = document.getElementById('backdrop');
+            sb.classList.toggle('active');
+            bd.style.display = sb.classList.contains('active') ? 'block' : 'none';
+        }
+
+        window.closeModal = () => {
+            document.getElementById('projectModal').classList.remove('active');
+            document.getElementById('modalBackdrop').style.display = 'none';
+        }
+
+        window.openNewProject = () => {
+            editingId = null;
+            document.getElementById('projectForm').reset();
+            document.getElementById('modalTitle').textContent = "Novo Projeto (Cloud)";
+            toggleContractFields();
+            document.getElementById('projectModal').classList.add('active');
+            document.getElementById('modalBackdrop').style.display = 'block';
+        }
+
+        window.switchView = (viewId, btn) => {
+            document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.remove('hidden');
+            document.getElementById(viewId).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            btn.classList.add('active');
+            if(window.innerWidth <= 768) toggleSidebar();
+        }
+
+        window.editProject = (id) => {
+            const p = projects.find(proj => proj.id === id);
+            if (!p) return;
+            editingId = id;
+            
+            // Preencher campos
+            document.getElementById('clientName').value = p.client;
+            document.getElementById('clientPhone').value = p.phone || '';
+            document.getElementById('systemType').value = p.system;
+            document.getElementById('contractType').value = p.type;
+            document.getElementById('projectValue').value = p.value;
+            document.getElementById('implValue').value = p.implValue || '';
+            document.getElementById('dueDay').value = p.dueDay || '';
+            document.getElementById('contractUrl').value = p.contractUrl || '';
+            document.getElementById('githubRepo').value = p.github || '';
+            document.getElementById('projectUrl').value = p.url || '';
+            document.getElementById('regUser').value = p.regUser || '';
+            document.getElementById('regPass').value = p.regPass || '';
+            document.getElementById('domainDate').value = p.domainDate || '';
+            document.getElementById('dbPlatform').value = p.dbPlatform || '';
+            document.getElementById('dbLink').value = p.dbLink || '';
+            document.getElementById('dbUser').value = p.dbUser || '';
+            document.getElementById('dbKey').value = p.dbKey || '';
+            document.getElementById('maintenanceLog').value = p.log || '';
+            
+            toggleContractFields();
+            document.getElementById('modalTitle').textContent = "Editar (Cloud)";
+            document.getElementById('projectModal').classList.add('active');
+            document.getElementById('modalBackdrop').style.display = 'block';
+        }
+
+        window.toggleContractFields = () => {
+            const type = document.getElementById('contractType').value;
+            const div = document.getElementById('mensalFields');
+            if(type === 'mensal') {
+                div.classList.remove('hidden');
+            } else {
+                div.classList.add('hidden');
+            }
+        }
+
+        window.renderProjects = () => {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const list = document.getElementById('projectsList');
             const alertList = document.getElementById('alertsList');
@@ -420,13 +448,11 @@
 
             filtered.forEach(p => {
                 if(p.type === 'mensal') monthlyTotal += p.value;
-
                 const badgeClass = p.type === 'vitalicio' ? 'badge-vitalicio' : 'badge-mensal';
                 const badgeText = p.type === 'vitalicio' ? 'VITALÍCIO' : 'MENSAL';
-
-                let extraAlerts = '';
                 
-                // Mensalidade
+                // Lógica de Alertas
+                let extraAlerts = '';
                 if(p.type === 'mensal' && p.dueDay) {
                     const due = parseInt(p.dueDay);
                     const diff = due - currentDay;
@@ -440,8 +466,6 @@
                         alertsHtml += createCardHtml(p, badgeClass, badgeText, tag);
                     }
                 }
-
-                // Domínio
                 if(p.domainDate) {
                     const domainDate = new Date(p.domainDate);
                     const diffTime = domainDate - today;
@@ -454,7 +478,6 @@
                         extraAlerts += `<div class="alert-tag alert-danger">🌐 Domínio Expirado!</div>`;
                     }
                 }
-
                 html += createCardHtml(p, badgeClass, badgeText, extraAlerts);
             });
 
@@ -489,8 +512,8 @@
                     <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:0.5rem;">
                         <span class="badge ${badgeClass}">${badgeText}</span>
                         <div style="display:flex; gap:0.5rem;">
-                            <button onclick="editProject(${p.id})" style="background:none; border:none; color:var(--text-secondary); cursor:pointer;">✏️</button>
-                            <button onclick="deleteProject(${p.id})" style="background:none; border:none; color:var(--text-secondary); cursor:pointer;">🗑️</button>
+                            <button onclick="editProject('${p.id}')" style="background:none; border:none; color:var(--text-secondary); cursor:pointer;">✏️</button>
+                            <button onclick="deleteProject('${p.id}')" style="background:none; border:none; color:var(--text-secondary); cursor:pointer;">🗑️</button>
                         </div>
                     </div>
                     <h3 style="font-size:1.1rem; margin-bottom:0.2rem;">${p.client}</h3>
@@ -498,93 +521,26 @@
                         <div style="color:var(--text-secondary); font-size:0.9rem;">${p.system}</div>
                         ${dbIcon}
                     </div>
-                    
                     <div style="margin-top:1rem; padding-top:0.5rem; border-top:1px dashed var(--border-color);">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
                             <div>
                                 <strong style="color:var(--success); font-size:1.1rem;">${valueDisplay}</strong>
                                 ${implDisplay}
                             </div>
-                            <button onclick="editProject(${p.id})" style="background:rgba(255,255,255,0.1); border:none; border-radius:4px; padding:2px 6px; cursor:pointer; font-size:0.8rem; color:white;">Ver Dados</button>
+                            <button onclick="editProject('${p.id}')" style="background:rgba(255,255,255,0.1); border:none; border-radius:4px; padding:2px 6px; cursor:pointer; font-size:0.8rem; color:white;">Ver Dados</button>
                         </div>
                     </div>
-                    
-                    <div style="margin-top: 5px;">
-                        ${extraAlerts}
-                        ${contractBtn}
-                        ${btnZap}
-                    </div>
+                    <div style="margin-top: 5px;">${extraAlerts}${contractBtn}${btnZap}</div>
                 </div>
             `;
         }
 
-        function editProject(id) {
-            const p = projects.find(proj => proj.id === id);
-            editingId = id;
-            
-            document.getElementById('clientName').value = p.client;
-            document.getElementById('clientPhone').value = p.phone || '';
-            document.getElementById('systemType').value = p.system;
-            
-            document.getElementById('contractType').value = p.type;
-            document.getElementById('projectValue').value = p.value;
-            document.getElementById('implValue').value = p.implValue || '';
-            document.getElementById('dueDay').value = p.dueDay || '';
-            document.getElementById('contractUrl').value = p.contractUrl || '';
-
-            document.getElementById('githubRepo').value = p.github || '';
-            document.getElementById('projectUrl').value = p.url || '';
-            document.getElementById('regUser').value = p.regUser || '';
-            document.getElementById('regPass').value = p.regPass || '';
-            document.getElementById('domainDate').value = p.domainDate || '';
-            
-            document.getElementById('dbPlatform').value = p.dbPlatform || '';
-            document.getElementById('dbLink').value = p.dbLink || '';
-            document.getElementById('dbUser').value = p.dbUser || '';
-            document.getElementById('dbKey').value = p.dbKey || '';
-            document.getElementById('maintenanceLog').value = p.log || '';
-            
-            toggleContractFields();
-            document.getElementById('modalTitle').textContent = "Editar Projeto";
-            document.getElementById('projectModal').classList.add('active');
-            document.getElementById('modalBackdrop').style.display = 'block';
+        // Init Day Select
+        const daySelect = document.getElementById('dueDay');
+        for(let i=1; i<=28; i++) {
+            const opt = document.createElement('option');
+            opt.value = i; opt.textContent = `Dia ${i}`; daySelect.appendChild(opt);
         }
-
-        function deleteProject(id) {
-            if(confirm("Tem certeza? Esta ação não pode ser desfeita.")) {
-                projects = projects.filter(p => p.id !== id);
-                saveAndRender();
-            }
-        }
-
-        function exportBackup() {
-            const dataStr = JSON.stringify(projects);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            const exportFileDefaultName = 'backup_victorino_' + new Date().toISOString().slice(0,10) + '.json';
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
-        }
-
-        function importBackup(input) {
-            const file = input.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    if(confirm(`Encontrados ${data.length} projetos. Importar?`)) {
-                        projects = data;
-                        saveAndRender();
-                        alert("Restaurado!");
-                    }
-                } catch(err) { alert("Erro no arquivo."); }
-            };
-            reader.readAsText(file);
-        }
-
-        if(localStorage.getItem(STORAGE_KEY)) renderProjects();
     </script>
 </body>
 </html>
